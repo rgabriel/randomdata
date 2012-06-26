@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="src/autoloader.php" colors="true">
+    <testsuites>
+        <testsuite name="Randomdata Test Suite">
+            <directory>tests/Randomdata/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src/Randomdata/</directory>
+        </whitelist>
+    </filter>
+</phpunit>
