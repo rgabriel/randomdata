@@ -1,7 +1,7 @@
 <?php
 namespace Randomdata\Formatter\en_US;
 
-class Name
+class Name extends AbstractLocaleFormatter
 {
     public function getFirstname()
     {
