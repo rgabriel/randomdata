@@ -4,6 +4,7 @@ namespace Randomdata;
 use Creator\CreatorsInterface;
 use Formater\FormaterInterface;
 
+
 class Generator
 {
     const DEFAULT_LOCALE = 'en_US';
@@ -14,13 +15,25 @@ class Generator
     
     private $creators;
     
-    private $formators;
+    private $formatters;
     
-    public function __construct($locale = self::DEFAULT_LOCALE, $fallbackLocale = self::DEFAULT_FALLBACK_LOCALE)
+    private $randomizer;
+    
+    public function __construct(
+            $locale = self::DEFAULT_LOCALE,
+            $fallbackLocale = self::DEFAULT_FALLBACK_LOCALE,
+            RandomizerInterface $randomizer = null)
     {
-        // Testing for existence of locale!
+        // @TODO Testing for existence of locales
         $this->locale = $locale;
         $this->fallbackLocale = $fallbackLocale;
+        
+        // Randomizer fallback
+        if (is_null($randomizer)) {
+            $randomizer = new Randomizer();
+        }
+        
+        $this->randomizer = $randomizer;
     }
     
     public function getLocale()
@@ -35,19 +48,20 @@ class Generator
     
     public function loadDefaultCreators()
     {
-        $this->addCreator(new Creator\Name());
+        $this->addCreator($this->loadCreator('Name'));
     }
-
-    public function loadFormaters()
+    
+    protected function loadCreator($name)
     {
-        if (count($this->creators) == 0) {
-            // No creators
-            throw new \RuntimeException('No creators registered');
-        }
+        $creatorClassName = 'Creator\\' . $name;
         
-        // Loop the creators to load the formators accordingly
-        foreach ($this->creators as $creator) {
-            
+        $creator = new $creatorClassName($this->randomizer);
+        
+        // See if they need a formatter
+        if ($creator->usesFormatter()) {
+            // find the formatter and load it
+            $formatter = '';
+            $creator->setFormatter($formatter);
         }
     }
     
@@ -56,8 +70,8 @@ class Generator
         $this->creators[] = $creator;
     }
     
-    public function addFormater(FormaterInterface $formater)
+    public function addFormatter(FormatterInterface $formatter)
     {
-        $this->formators[] = $formator;
+        $this->formatters[] = $formatter;
     }
 }
